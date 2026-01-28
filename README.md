@@ -1,4 +1,4 @@
-Ace Bikes Data Generator
+# Ace Bikes Data Generator
 
 Generates synthetic Ace Bikes data for extended years based on existing historical files.
 
@@ -6,16 +6,15 @@ Generates synthetic Ace Bikes data for extended years based on existing historic
 
 Usage
 
-make generate.py START_YEAR=<baseline_year> NUM=<num_years>
+1. Run install: 
+``` bash
+make intall
+```
 
-Example
-
-make generate.py START_YEAR=2022 NUM=4
-
-This generates data for: 
-
-2022, 2023, 2024, 2025
-
+2. Generate new data:
+``` bash
+make generate
+```
 
 ⸻
 

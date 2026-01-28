@@ -692,6 +692,7 @@ print("\n[STEP 7] Exporting data to files...")
 original_max_employee_id = employees_orig['EmployeeID'].max()
 new_employees_only = new_employees_df[new_employees_df['EmployeeID'] > original_max_employee_id]
 
+
 # Define column sets
 customer_cols = [
     "CustomerID",
@@ -718,6 +719,11 @@ try:
     # Export new employees
     new_employees_only.to_excel(
         './data_new/newEmployees.xlsx',
+        sheet_name='Employees',
+        index=False
+    )
+    new_employees_df.to_excel(
+        './data_new/FULL_Employees.xlsx',
         sheet_name='Employees',
         index=False
     )
