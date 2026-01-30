@@ -17,6 +17,7 @@ import numpy as np
 from faker import Faker
 from datetime import datetime, timedelta, date
 import warnings
+import pickle
 warnings.filterwarnings('ignore')
 
 
@@ -192,6 +193,10 @@ for year in YEARS_TO_GENERATE:
             'employees_needed': employees_needed
         }
         current_locations.append(new_location)
+
+
+with open("locations.pkl", "wb") as f:
+    pickle.dump(NEW_STORES, f)
 
 print(f"✓ Planned new stores:")
 for year, store_info in NEW_STORES.items():
@@ -723,7 +728,7 @@ try:
         index=False
     )
     new_employees_df.to_excel(
-        './data_new/FULL_Employees.xlsx',
+        './data_full/Employees.xlsx',
         sheet_name='Employees',
         index=False
     )

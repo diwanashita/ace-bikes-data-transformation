@@ -36,7 +36,7 @@ customers_final_df = (
 )
 customers_final_df[customer_cols].drop_duplicates().rename(columns={
     "CustomerID": "id"
-}).to_excel('./data_new/FULL_Customers.xlsx', sheet_name='Customers', index=False)
+}).to_excel('./data_full/Customers.xlsx', sheet_name='Customers', index=False)
 
 # orig customers data
 orders_orig = pd.read_excel('./data_original/OrderInfo.xlsx')
@@ -53,4 +53,4 @@ orders_final_df = (
 )
 
 orders_final_df[order_cols].drop_duplicates(subset=["CustomerID", "OrderID"]) \
-    .to_excel('./data_new/FULL_OrderInfo.xlsx', sheet_name='OrderInfo', index=False)
+    .to_excel('./data_full/OrderInfo.xlsx', sheet_name='OrderInfo', index=False)

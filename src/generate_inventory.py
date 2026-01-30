@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pickle
 
 
 lineitemsorig_df = pd.read_csv('./data_original/LineItemSales.csv')
@@ -21,15 +22,34 @@ lineitems_with_date_df.isna().sum() # confirm no missing values
 lineitemsnew_df = pd.read_csv('data_new/newLineItemSales.csv')
 lineitem_full_df = pd.concat([lineitems_with_date_df, lineitemsnew_df], ignore_index=True)
 
-lineitem_full_df.to_csv('./data_new/FULL_LineItemSales.csv', index=False)
+lineitem_full_df.to_csv('./data_full/LineItemSales.csv', index=False)
 
 # Location establishment years
+# LOAD
+
+# new_stores = {
+#     2022: {'location': 'L12', 'employees_needed': 5},
+#     2023: {'location': 'L13', 'employees_needed': 5},
+#     2024: {'location': 'L14', 'employees_needed': 5},
+#     2025: {'location': 'L15', 'employees_needed': 6}
+# }
+with open("locations.pkl", "rb") as f:
+    loaded_dict = pickle.load(f)
+
+
 location_years = {
     'L01': 2017, 'L02': 2018, 'L03': 2018, 'L04': 2019, 'L05': 2019,
     'L06': 2020, 'L07': 2020, 'L08': 2020, 'L09': 2021, 'L10': 2021,
-    'L11': 2021, 'L12': 2022, 'L13': 2023, 'L14': 2024, 'L15': 2025
+    'L11': 2021
 }
 
+for key in loaded_dict.keys():
+    loc = loaded_dict[key]['location']
+    location_years[loc] = key
+
+print(location_years)
+
+print("Generating Inventory | This step will take a few minutes :)")
 
 def generate_inventory_dataframe(line_items_df, y1=2017, y2=2025, num_items=64):
     """
@@ -187,5 +207,5 @@ if __name__ == "__main__":
     }))
     
     
-inventory_df.to_csv('./data_new/FULL_Inventory.csv', index=False)
+inventory_df.to_csv('./data_full/Inventory.csv', index=False)
 

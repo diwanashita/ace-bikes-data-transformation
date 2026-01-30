@@ -62,19 +62,14 @@ WebStats (2023, 2024, 2025)
     - Unsure
 
 7. **Reviews files:** create new files for 2023, 2024 & 2025
-    - Reviews are a subset of orders
-    - Review rate @ 10-15% of orders
-    - Review `Date` @ 3-21 days after purchase
-    - `Rating` distribution @ mostly 5-4 starts, very few 1 stars
-    - `Platform` @ same distribution as previous years
-    - One review per order max
+    - Review rate: 2022=2919 reviews, 2021=2878, 2022=2088, 2019=1298, 2018=776, 2017=209
+    - `Rating` distribution on a scale of 1-10, but only 6-10 ratings, more leaning on higher end
+    - `Platform` distribution between Facebook, Yelp and Google, with preference in that order so Facebooks has slightly more dist then Telp then Google (ex. 35%-34%-31% respectively)
 
 8. **WebStats files:** create new files for 2023, 2024 & 2025
-    - WebStats should correlate with online orders
-    - Sessions grow faster than sales (~ +10% YoY)
-    - `Conversion_rate` = mostly stable, slight improvement over time
-    - `Device_type` = increasing mobile share
-    - `Bounce_rate` inversely related to `time_on_page` 
+    - Sessions grow faster than sales (2017=500 stats, 2018=900, 2019=1500, 2020=2000, 2021=3000, 2022=4000)
+    - `Conversion_rate` = mostly stable, slight improvement over time but has lots of variance within a year
+    - `Device_type` = increasing mobile share but still distributed
     - Don't need 1:1 user, just order mapping for macro alignment
 
 ### Validation checks
