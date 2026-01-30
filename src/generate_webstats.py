@@ -272,6 +272,7 @@ def main(start_year=2023, num_years=3, output_dir='./data_full/WebStats/'):
         # Save to CSV
         filename = f"WebStats{year}.csv"
         df.to_csv(f'{output_dir}{filename}', index=False)
+        df.to_csv(f'./data_new/WebStats/{filename}', index=False)
         
         print(f"  ✓ Created {filename}")
     
