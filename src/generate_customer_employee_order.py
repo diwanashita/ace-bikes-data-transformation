@@ -81,8 +81,8 @@ GENDER_OPTIONS = ['M', 'F', 'X']
 GENDER_WEIGHTS = [0.48, 0.50, 0.02]
 
 # Growth rates
-NEW_CUSTOMER_GROWTH_RATE = 0.095  # 9.5% new customers per year
-REPEAT_CUSTOMER_RATE = 0.005      # 0.5% repeat customers per year
+NEW_CUSTOMER_GROWTH_RATE = 0.25  # 30% new customers per year
+REPEAT_CUSTOMER_RATE = 0.40      # 35% repeat customers per year
 
 # Employee settings
 EMPLOYEE_GENDER_OPTIONS = ['Male', 'Female', 'Other']

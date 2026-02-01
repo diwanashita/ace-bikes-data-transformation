@@ -107,7 +107,7 @@ def generate_inventory_dataframe(line_items_df, y1=2017, y2=2025, num_items=64):
     
     # Set inventory parameters
     # Different items might have different thresholds; here we'll use item-based variation
-    np.random.seed(42)
+    np.random.seed(1234)
     item_thresholds = {item_id: np.random.randint(30, 100) for item_id in range(1, num_items + 1)}
     
     # Initialize columns
