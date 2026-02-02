@@ -22,6 +22,12 @@ lineitems_with_date_df.isna().sum() # confirm no missing values
 lineitemsnew_df = pd.read_csv('data_new/newLineItemSales.csv')
 lineitem_full_df = pd.concat([lineitems_with_date_df, lineitemsnew_df], ignore_index=True)
 
+# Parse to datetime, then format as date-only string
+lineitem_full_df["Date"] = (
+    pd.to_datetime(lineitem_full_df["Date"], errors="coerce")
+      .dt.strftime("%Y-%m-%d")
+)
+
 lineitem_full_df.to_csv('./data_full/LineItemSales.csv', index=False)
 
 # Location establishment years

@@ -1,7 +1,7 @@
 """
-Ace Bikes Data Generator - Extended Years
-==========================================
-Generates synthetic customer and employee data for specified years.
+Ace Bikes Data Generator - Extended Years (EMPLOYEE FIX)
+=========================================================
+Generates synthetic customer and employee data for specified years. 
 
 Usage:
     python script.py <baseline_year> <num_years>
@@ -54,7 +54,7 @@ BASELINE_YEAR, NUM_YEARS = parse_arguments()
 YEARS_TO_GENERATE = list(range(BASELINE_YEAR, BASELINE_YEAR + NUM_YEARS))
 
 print("=" * 80)
-print("ACE BIKES DATA GENERATOR")
+print("ACE BIKES DATA GENERATOR (EMPLOYEE FIX)")
 print("=" * 80)
 print(f"Baseline Year: {BASELINE_YEAR}")
 print(f"Number of Years: {NUM_YEARS}")
@@ -81,8 +81,8 @@ GENDER_OPTIONS = ['M', 'F', 'X']
 GENDER_WEIGHTS = [0.48, 0.50, 0.02]
 
 # Growth rates
-NEW_CUSTOMER_GROWTH_RATE = 0.25  # 30% new customers per year
-REPEAT_CUSTOMER_RATE = 0.40      # 35% repeat customers per year
+NEW_CUSTOMER_GROWTH_RATE = 0.18  # 18% new customers per year
+REPEAT_CUSTOMER_RATE = 0.40      # 40% repeat customers per year
 
 # Employee settings
 EMPLOYEE_GENDER_OPTIONS = ['Male', 'Female', 'Other']
@@ -256,9 +256,9 @@ def generate_new_customers(year, num_customers, next_customer_id, next_order_id,
     # Check if a new store opened this year
     new_store = new_stores_dict.get(year)
     
-    # Allocate 20% of new customers to new store if it exists
+    # Allocate 10% of new customers to new store if it exists
     if new_store:
-        new_store_customers = int(num_customers * 0.20)
+        new_store_customers = int(num_customers * 0.10)
         regular_customers = num_customers - new_store_customers
     else:
         new_store_customers = 0
@@ -266,6 +266,8 @@ def generate_new_customers(year, num_customers, next_customer_id, next_order_id,
     
     # Generate regular customers across existing locations
     for i in range(regular_customers):
+        if year == BASELINE_YEAR:
+            break
         # Random date within the year
         day_of_year = np.random.randint(1, 366)
         customer_date = datetime(year, 1, 1) + timedelta(days=day_of_year - 1)
@@ -301,10 +303,11 @@ def generate_new_customers(year, num_customers, next_customer_id, next_order_id,
         # Customer acquisition source
         source = np.random.choice(SOURCE_OPTIONS, p=SOURCE_WEIGHTS)
         
-        # Location (exclude new stores that opened this year)
-        new_locations_this_year = [item['location'] for y, item in new_stores_dict.items() if y == year]
+        # Location (exclude new stores that opened this year or will open in future)
+        new_locations_this_year = [item['location'] for y, item in new_stores_dict.items() if y - 1 >= year]
         available_locs = [loc for loc in all_locations if loc not in new_locations_this_year]
-        location = np.random.choice(available_locs) if available_locs else np.random.choice(all_locations)
+
+        location = np.random.choice(available_locs)
         
         new_customer = {
             'CustomerID': next_customer_id,
@@ -410,10 +413,14 @@ def generate_duplicate_customers(year, num_customers, next_order_id, customer_df
         tuple: (list of repeat order dicts, updated next_order_id)
     """
     new_orders = []
+
+    customer_df["Date"] = pd.to_datetime(customer_df["Date"], errors="coerce")
+    sampling_df = customer_df.loc[customer_df["Date"].dt.year <= year]
+    sampling_df['year'] = sampling_df["Date"].dt.year
     
     for i in range(num_customers):
         # Sample a random existing customer
-        sampled_customer = customer_df.sample(n=1).iloc[0]
+        sampled_customer = sampling_df.sample(n=1).iloc[0]
         
         # Generate new date within the specified year
         day_of_year = np.random.randint(1, 366)
@@ -449,7 +456,7 @@ def generate_duplicate_customers(year, num_customers, next_order_id, customer_df
 
 
 # ============================================================================
-# EMPLOYEE MANAGEMENT FUNCTIONS
+# EMPLOYEE MANAGEMENT FUNCTIONS - FIXED
 # ============================================================================
 
 def create_new_employee(location, year, new_employees_df):
@@ -509,9 +516,33 @@ def create_new_employee(location, year, new_employees_df):
     return employee_id, new_employees_df
 
 
+def prestaff_new_store(location, year, num_employees, new_employees_df):
+    """
+    Pre-staff a new store with employees at the beginning of the year.
+    
+    Args:
+        location: Store location ID
+        year: Year the store opens
+        num_employees: Number of employees to hire
+        new_employees_df: DataFrame of employees
+        
+    Returns:
+        Updated employees DataFrame
+    """
+    global next_employee_id
+    
+    print(f"    - Pre-staffing {location} with {num_employees} employees")
+    
+    for _ in range(num_employees):
+        _, new_employees_df = create_new_employee(location, year, new_employees_df)
+    
+    return new_employees_df
+
+
 def assign_employee(row, new_employees_df):
     """
     Assign an employee to an order based on location, date, and availability.
+    Only creates employees when location has zero eligible staff.
     
     Args:
         row: DataFrame row containing order information
@@ -543,25 +574,17 @@ def assign_employee(row, new_employees_df):
         (eligible['TerminationDate'] > order_date)
     ]
     
-    # 99.5% of the time, use existing employee; 0.5% create new
-    use_existing = np.random.random() < 0.995
-    
-    if len(eligible) > 0 and use_existing:
-        # Use existing employee
+    # FIX: Only create employee if NO eligible employees exist
+    # This prevents random over-hiring
+    if len(eligible) > 0:
+        # Use existing employee - random selection
         return np.random.choice(eligible['EmployeeID'].values), new_employees_df
     else:
-        # Small chance of termination (25%) when creating new employee
-        if not use_existing and len(eligible) > 0 and np.random.random() < 0.25:
-            emp_to_terminate = np.random.choice(eligible['EmployeeID'].values)
-            termination_date = order_date - pd.Timedelta(days=np.random.randint(7, 30))
-            new_employees_df.loc[
-                new_employees_df['EmployeeID'] == emp_to_terminate,
-                'TerminationDate'
-            ] = termination_date
-        
-        # Create new employee
+        # No employees available - create one
+        # This typically only happens for new stores or edge cases
         employee_id, new_employees_df = create_new_employee(location, order_year, new_employees_df)
         return employee_id, new_employees_df
+        
 
 
 # ============================================================================
@@ -590,8 +613,8 @@ for year in YEARS_TO_GENERATE:
     print(f"    - Target new customers: {new_customer_count}")
     if year in NEW_STORES:
         print(f"    - New store opening: {NEW_STORES[year]['location']}")
-        print(f"    - New store customers: {int(new_customer_count * 0.20)}")
-        print(f"    - Regular customers: {int(new_customer_count * 0.80)}")
+        print(f"    - New store customers: {int(new_customer_count * 0.10)}")
+        print(f"    - Regular customers: {int(new_customer_count * 0.90)}")
     
     # Generate new customers
     year_customers, next_customer_id, next_order_id = generate_new_customers(
@@ -621,10 +644,14 @@ print("\n[STEP 5] Generating repeat customer orders...")
 
 # Convert new customers to DataFrame for sampling
 new_customers_temp_df = pd.DataFrame(all_new_customers)
-current_baseline = customers_baseline
+customers_final_df = pd.concat([new_customers_temp_df, customer_order_df], ignore_index=True)
+customers_final_df["Date"] = pd.to_datetime(customers_final_df["Date"], errors="coerce")
+
+cutoff = pd.Timestamp(date(BASELINE_YEAR - 1, 12, 31))
+current_baseline = customers_final_df.loc[customers_final_df["Date"] > cutoff].shape[0] 
 
 # Generate repeat orders for years after baseline
-for year in YEARS_TO_GENERATE[1:]:  # Skip first year
+for i, year in enumerate(YEARS_TO_GENERATE[1:]):  # Skip first year
     # Calculate number of repeat orders
     repeat_order_count = int(current_baseline * REPEAT_CUSTOMER_RATE)
     
@@ -635,10 +662,11 @@ for year in YEARS_TO_GENERATE[1:]:  # Skip first year
         year,
         repeat_order_count,
         next_order_id,
-        new_customers_temp_df
+        customers_final_df
     )
     
     all_new_customers.extend(repeat_orders)
+    current_baseline += repeat_order_count
     
     print(f"    ✓ Generated {len(repeat_orders)} repeat orders")
 
@@ -662,6 +690,17 @@ employees_orig['TerminationDate'] = pd.to_datetime(employees_orig['TerminationDa
 new_employees_df = employees_orig.copy()
 
 print(f"  Starting with {len(new_employees_df)} existing employees...")
+
+# FIX: Pre-staff new stores when they open
+print(f"\n  Pre-staffing new stores...")
+for year in YEARS_TO_GENERATE:
+    if year in NEW_STORES:
+        new_employees_df = prestaff_new_store(
+            NEW_STORES[year]['location'],
+            year,
+            NEW_STORES[year]['employees_needed'],
+            new_employees_df
+        )
 
 # Assign employees to each order
 employee_assignments = []

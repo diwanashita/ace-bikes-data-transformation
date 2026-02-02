@@ -32,6 +32,32 @@ Generate the next 10 years starting from 2022 (creates 2022-2031):
 make generate START_YEAR=2022 NUM=10
 ```
 
+3. Update `Ace_Bikes_Data.xlsx` to include the tables
+
+Table Glossary: 
+
+| **Table Columns** | **Table Name** |
+|---|---|
+| A:D | EmployeeDates |
+| F:L | EmployeeReviewInfo |
+| N:O | Reason |
+| Q:V | Items |
+| X:AA | Categories |
+| AC:AE | Vendors |
+| AG:AM | VendorScore |
+| AO:AP | Returns |
+| AR:AS | ReturnReason |
+| AU:AW | Discounts |
+| AY:BC | Locations |
+| BE:BF | OnlineOrderShipTo |
+| BH:BK | Expenses |
+| BM:BN | ExpenseType |
+| BP:BQ | LeaseCosts |
+| BS:BU | Research |
+| BW:BY | ExcursionTypes |
+
+
+
 
 ## Info About This Project
 

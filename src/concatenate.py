@@ -54,3 +54,15 @@ orders_final_df = (
 
 orders_final_df[order_cols].drop_duplicates(subset=["CustomerID", "OrderID"]) \
     .to_excel('./data_full/OrderInfo.xlsx', sheet_name='OrderInfo', index=False)
+
+
+# Clean LineItemSales.csv: drop StartDate, TerminationDate, LocationID
+lineitems_path = "./data_full/LineItemSales.csv"
+
+lineitems_df = pd.read_csv(lineitems_path)
+
+cols_to_drop = ["StartDate", "TerminationDate", "LocationID"]
+lineitems_df = lineitems_df.drop(columns=cols_to_drop, errors="ignore")
+
+# overwrite in the same place with the same name
+lineitems_df.to_csv(lineitems_path, index=False)

@@ -25,6 +25,7 @@ generate:
 	$(PYTHON) ./src/generate_customer_employee_order.py $(START_YEAR) $(NUM)
 	$(PYTHON) ./src/generate_line_item_sales.py
 	$(PYTHON) ./src/generate_inventory.py
+	$(PYTHON) ./src/update_ace_bikes_data.py
 	$(PYTHON) ./src/concatenate.py
 	$(PYTHON) ./src/copy_existing.py
 	$(PYTHON) ./src/generate_reviews.py $(START_YEAR) $(NUM)
