@@ -20,8 +20,8 @@ for _, order in orders_df.iterrows():
     date = order['Date']
     location = order['LocationID']
     
-    # Generate 1-3 line items per order
-    num_line_items = np.random.randint(1, 5)
+    # Generate 1-5 line items per order
+    num_line_items = np.random.randint(1, 6)
     
     # Track items already added to this order to avoid duplicates
     items_in_order = set()
@@ -45,12 +45,12 @@ for _, order in orders_df.iterrows():
         
         # Generate Quantity based on ItemID
         if 1 <= item_id <= 21:
-            quantity = 1  # Strictly 1 for items 1-21
+            quantity = np.random.randint(1, 2)  # Strictly 1 for items 1-21
         else:
-            if np.random.random() < 0.98:
-                quantity = 1
+            if np.random.random() < 0.96:
+                quantity = np.random.randint(1, 2)
             else:    
-                quantity = np.random.randint(2, 5)  # 1-4 for other items
+                quantity = np.random.randint(2, 6)  # 2-5 for other items
         
         # Generate DiscountID with specified probabilities
         discount_rand = np.random.random()

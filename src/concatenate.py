@@ -61,8 +61,6 @@ lineitems_path = "./data_full/LineItemSales.csv"
 
 lineitems_df = pd.read_csv(lineitems_path)
 
-cols_to_drop = ["StartDate", "TerminationDate", "LocationID"]
-lineitems_df = lineitems_df.drop(columns=cols_to_drop, errors="ignore")
-
+# cols_to_drop = ["StartDate", "TerminationDate", "LocationID"]
 # overwrite in the same place with the same name
 lineitems_df.to_csv(lineitems_path, index=False)
